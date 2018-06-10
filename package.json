@@ -4,7 +4,7 @@
   "description": "A minimalistic version of reddit with REST APIs for create, read, upvote and downvote a content",
   "main": "server.js",
   "scripts": {
-  	"start": "node server.js",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

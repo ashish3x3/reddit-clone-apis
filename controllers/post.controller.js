@@ -45,7 +45,7 @@ exports.create = function(req, res){
 /* Return all the posts in the system. Sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
 exports.getAll = function(req, res) {
 	/* sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
-	response = {};
+	let response = {};
 	response['data'] = DataStructureDb.posts;
 	res.status(200).json(response);
 };
@@ -104,9 +104,9 @@ exports.downvote = function(req,res) {
 		});
 	}
 
-	postId = req.params.id;
-	decrementVoteCount = req.body.downvotes;
-	voterId = req.body.voterId;
+	const postId = req.params.id;
+	const decrementVoteCount = req.body.downvotes;
+	const voterId = req.body.voterId;
 
 	/* If post is not present in the system, return status 404 with error message:post does not exist*/
 	if(DataStructureDb.posts[postId] === false) {
@@ -127,7 +127,7 @@ exports.downvote = function(req,res) {
 
 exports.popularPosts = function(req,res) {
 	//check if limit is present in the URI. Limit is used to determine how many top posts by upvotes has to be returned
-	limit = req.params.limit;
+	let limit = req.params.limit;
 
 	/* If limit is not defined then return top 20 upvoted posts*/
 	if(!limit) {

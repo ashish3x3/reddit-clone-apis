@@ -38,7 +38,13 @@ require('strict-mode')(function () {
 	/* Since its an API, it is bould to change over time with new requirements. Creating a version v1 for version 1 of this API */
 	app.use('/v1', indexRouter);
 
-	app.listen(4000, function() {
-	  console.log('Listening on port 4000...');
+	app.listen(process.env.PORT || 4001, function() {
+		if(process.env.PORT !== undefined) {
+			console.log('Listening on port ...',process.env.PORT);
+		} else {
+			console.log('Listening on port 4001 ...');
+		}
+
+
 	})
 });
