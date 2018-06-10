@@ -130,7 +130,7 @@ exports.popularPosts = function(req,res) {
 	let limit = req.params.limit;
 
 	/* If limit is not defined then return top 20 upvoted posts*/
-	if(!limit) {
+	if(!limit && limit > 0) {
 		limit  = 20;
 	}
 
