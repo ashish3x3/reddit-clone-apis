@@ -35,19 +35,33 @@ exports.create = function(req, res){
 		});
 	}
 
-	const newPost = new Post(DataStructureDb.posts.length, req.body.content, req.body.authorId);
-	DataStructureDb.posts.push(newPost);
+	try{
+		const newPost = new Post(DataStructureDb.posts.length, req.body.content, req.body.authorId);
+		DataStructureDb.posts.push(newPost);
 
-	/* If new post is created usccesfully return the status 201 */
-	res.status(201).json(newPost);
+		/* If new post is created usccesfully return the status 201 */
+		res.status(201).json({'data':newPost, 'error':{}});
+	} catch (err) {
+		return res.status(500).send({
+			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
+		});
+	}
+
 };
 
 /* Return all the posts in the system. Sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
 exports.getAll = function(req, res) {
-	/* sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
-	let response = {};
-	response['data'] = DataStructureDb.posts;
-	res.status(200).json(response);
+	try {
+		/* sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
+		let response = {};
+		response['data'] = DataStructureDb.posts;
+		response['error'] = {};
+		res.status(200).json(response);
+	} catch (err) {
+		return res.status(500).send({
+			message:'The server encountered an unexpected condition which prevented it from fulfilling the request'
+		});
+	}
 };
 
 /* Upvote a post. This accepts a upvote counter and userID of the user who upvoted the post as params and increment the votes of the post uniquely identified by postId(given by the API) with upvote counter and adds the userId of the voter to the field 'voterIds' if it is already not present */
@@ -78,14 +92,20 @@ exports.upvote = function(req,res) {
 		       });
 	}
 
-	/* update the post with new value and return the updated post with status 200 */
-	DataStructureDb.posts[postId].votes += incrementVoteCount;
-	if(DataStructureDb.posts[postId].voterIds.indexOf(voterId) === -1 ) {
-		DataStructureDb.posts[postId].voterIds.push(voterId);
-	}
+	try {
+		/* update the post with new value and return the updated post with status 200 */
+		DataStructureDb.posts[postId].votes += incrementVoteCount;
+		if(DataStructureDb.posts[postId].voterIds.indexOf(voterId) === -1 ) {
+			DataStructureDb.posts[postId].voterIds.push(voterId);
+		}
 
-	/* If new post is upvoted succesfully return the status 200 with upvoted post */
-	res.status(200).json(DataStructureDb.posts[postId]);
+		/* If new post is upvoted succesfully return the status 200 with upvoted post */
+		res.status(201).json({'data':DataStructureDb.posts[postId], 'error':{}});
+	} catch (err) {
+		return res.status(500).send({
+			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
+		});
+	}
 };
 
 /* Downvote a post. This accepts a downvote counter and userID of the user who downvoted the post as params and decrement the votes of the post uniquely identified by postId(given by the API) with upvote counter and adds the userId of the voter to the field 'voterIds' if it is already not present */
@@ -115,13 +135,20 @@ exports.downvote = function(req,res) {
 		       });
 	}
 
-	DataStructureDb.posts[postId].votes -= decrementVoteCount;
-	if(DataStructureDb.posts[postId].voterIds.indexOf(voterId) === -1 ) {
-		DataStructureDb.posts[postId].voterIds.push(voterId);
-	}
+	try {
 
-	/* If new post is downvoted succesfully return the status 200 with downvoted post */
-	res.status(200).json(DataStructureDb.posts[postId]);
+		DataStructureDb.posts[postId].votes -= decrementVoteCount;
+		if(DataStructureDb.posts[postId].voterIds.indexOf(voterId) === -1 ) {
+			DataStructureDb.posts[postId].voterIds.push(voterId);
+		}
+
+		/* If new post is downvoted succesfully return the status 200 with downvoted post */
+		res.status(201).json({'data':DataStructureDb.posts[postId], 'error':{}});
+	} catch (err) {
+		return res.status(500).send({
+			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
+		});
+	}
 };
 
 
@@ -134,11 +161,17 @@ exports.popularPosts = function(req,res) {
 		limit  = 20;
 	}
 
-	/* sort the posts by upvote count */
-	const topNPosts = DataStructureDb.posts.sort(function (obj1, obj2) {
-	  return obj1.votes < obj2.votes;
-	}).slice(0, limit);
+	try {
+		/* sort the posts by upvote count */
+		const topNPosts = DataStructureDb.posts.sort(function (obj1, obj2) {
+		  return obj1.votes < obj2.votes;
+		}).slice(0, limit);
 
-	/* return the top N = :limit posts */
-	res.status(200).json(topNPosts);
+		/* return the top N = :limit posts */
+		res.status(200).json({'data':topNPosts, 'error':{}});
+	} catch (err) {
+		return res.status(500).send({
+			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
+		});
+	}
 }

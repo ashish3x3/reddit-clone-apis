@@ -13,6 +13,7 @@ require('strict-mode')(function () {
 		res.header('Access-Control-Allow-Origin', '*'); // www.heroku.com
 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST');
 		res.header('Access-Control-Allow-Headers', 'Content-Type');
+		res.header('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
 		res.header('Content-Type', 'application/json');
 
 		/* If API receive DELETE method in the call, return status 404 with message: http method DELETE is not supported */
@@ -20,8 +21,10 @@ require('strict-mode')(function () {
 	      	res.status(404).send({
 	      			message:'http method DELETE is not supported'
 	      	});
-	    } else if('OPTIONS' == req.method) { // intercept OPTIONS method. This is required because some broweser before making a POST or PUT request make s a call to OPTIONS
-	    	res.send(200);
+	    } else if('OPTIONS' == req.method) {
+	    	/* intercept OPTIONS method. This is required because some broweser before making a POST or PUT request make s a call to OPTIONS */
+	    	res.header('Access-Control-Allow-Methods', 'GET, PUT, POST');
+	    	res.status(200).json({});
 	    } else {
 	    	/* contine the processing */
 			next();
