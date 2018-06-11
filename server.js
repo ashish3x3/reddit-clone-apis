@@ -2,11 +2,16 @@ require('strict-mode')(function () {
 	var express = require('express');
 	var helmet = require('helmet');
 	var methodOverride = require("method-override");
+	var bodyParser = require('body-parser')
 
+	// load the routers from routes folder
 	var indexRouter = require('./routes');
+
+	// Create a new instance of express
 	var app = express();
 
 	app.use(methodOverride());
+
 
 	/* Since we will be placing our API in different subdomain such as www.heroku.com , it will require implementations of Cross-Origin Resource Sharing (CORS) for the backend */
 	var allowCrossDomain = function(req, res, next) {
@@ -31,9 +36,10 @@ require('strict-mode')(function () {
 	    }
 	};
 
-	app.use(express.json());
+	// Tell express to use the body-parser middleware and to not parse extended bodies
 	app.use(express.urlencoded({ extended: true }));
 	app.use(allowCrossDomain);
+	app.use(bodyParser.text({ type: 'application/json' }));
 
 	/* helmet protects app from some well known web vulnerabilities by setting HTTP headers appropriately. Like disabling 'x-powered-by' header, set xssFilter to avoid Cross-site scripting (XSS), etc */
 	app.use(helmet());
@@ -41,7 +47,11 @@ require('strict-mode')(function () {
 	/* Since its an API, it is bould to change over time with new requirements. Creating a version v1 for version 1 of this API */
 	app.use('/v1', indexRouter);
 
-	app.listen(process.env.PORT || 4001, function() {
+	app.listen(process.env.PORT || 4001, function(err) {
+		if (err) {
+			throw err
+		}
+
 		if(process.env.PORT !== undefined) {
 			console.log('Listening on port ...',process.env.PORT);
 		} else {
