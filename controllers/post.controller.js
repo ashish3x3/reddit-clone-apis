@@ -1,7 +1,7 @@
 const DataStructureDb = require('../models/dataStructure.post.models.js');
 
-/* Data structure to hold a Post in the system */
 /*
+	description: data structure to hold a Post in the system
 	@param id : unique Id assigned to the post
 	@param content : body of the post
 	@param authorId : userId of the user who created the post
@@ -21,21 +21,32 @@ const Post = function(id, content, authorId) {
 
 /* Create a new Post */
 exports.create = function(req, res){
-	// validate if content is present or not
-	if(!req.body.content) {
-		return res.status(400).send({
-			message:'Post Content cannot be empty'
-		});
+	let parsed;
+	/* validate if the body is a valid json or not */
+	try {
+		parsed = JSON.parse(req.body);
+		// console.log(parsed);
+		// console.log(parsed.content);
+		// console.log(parsed.authorId);
+	} catch (err) {
+		res.status(400).send({'message':'The body of your request is not a valid JSON'});
 	}
 
-	// validate if Id of the author who created this post is present or not
-	if(!req.body.authorId) {
-		return res.status(400).send({
-			message:'Post has to be associated with some User. UserId cannot be empty'
-		});
-	}
+	try {
+		// validate if content is present or not
+		if(!parsed.content) {
+			return res.status(400).send({
+				message:'Post Content cannot be empty'
+			});
+		}
 
-	try{
+		// validate if Id of the author who created this post is present or not
+		if(!parsed.authorId) {
+			return res.status(400).send({
+				message:'Post has to be associated with some User. UserId cannot be empty'
+			});
+		}
+
 		const newPost = new Post(DataStructureDb.posts.length, req.body.content, req.body.authorId);
 		DataStructureDb.posts.push(newPost);
 
@@ -66,15 +77,24 @@ exports.getAll = function(req, res) {
 
 /* Upvote a post. This accepts a upvote counter and userID of the user who upvoted the post as params and increment the votes of the post uniquely identified by postId(given by the API) with upvote counter and adds the userId of the voter to the field 'voterIds' if it is already not present */
 exports.upvote = function(req,res) {
-	// validate upvote increment counter value is present or not. If not return status code 400 with error message: post upvote value cannot be empty
-	if(!req.body.upvotes) {
+	let parsed;
+	/* validate if the body is a valid json or not */
+	try {
+		parsed = JSON.parse(req.body);
+		console.log('parsed ',parsed);
+	} catch (err) {
+		res.status(400).send({'message':'The body of your request is not a valid JSON'});
+	}
+
+	/* validate upvote increment counter value is present or not. If not return status code 400 with error message: post upvote value cannot be empty */
+	if(!parsed.upvotes) {
 		return res.status(400).send({
 			message:'post upvote value cannot be empty'
 		});
 	}
 
 	/* validate userId of the user who upvoted the post is presnt or not. Any upvote has to be associated with an userId i.e. user who upvoted the post */
-	if(!req.body.voterId) {
+	if(!parsed.voterId) {
 		return res.status(400).send({
 			message:'voterId value cannot be empty'
 		});
@@ -82,14 +102,14 @@ exports.upvote = function(req,res) {
 
 	/* Store the important entities in a variable*/
 	const postId = req.params.id;
-	const incrementVoteCount = req.body.upvotes;
-	const voterId = req.body.voterId;
+	const incrementVoteCount = parsed.upvotes;
+	const voterId = parsed.voterId;
 
 	/* If the post is not available in the system, return status code 404 with error message: post does not exist */
 	if(DataStructureDb.posts[postId] === false) {
 		return res.status(404).send({
-		           message: "post does not exist"
-		       });
+			message: "post does not exist"
+		});
 	}
 
 	try {
@@ -110,23 +130,31 @@ exports.upvote = function(req,res) {
 
 /* Downvote a post. This accepts a downvote counter and userID of the user who downvoted the post as params and decrement the votes of the post uniquely identified by postId(given by the API) with upvote counter and adds the userId of the voter to the field 'voterIds' if it is already not present */
 exports.downvote = function(req,res) {
-	// validate downvote decrement counter value is present or not. If not present return status 400 - with error message:post downvote value cannot be empty
-	if(!req.body.downvotes) {
+	let parsed;
+	/* validate if the body is a valid json or not */
+	try {
+		parsed = JSON.parse(req.body);
+	} catch (err) {
+		res.status(400).send({'message':'The body of your request is not a valid JSON'});
+	}
+
+	/* validate downvote decrement counter value is present or not. If not present return status 400 - with error message:post downvote value cannot be empty */
+	if(!parsed.downvotes) {
 		return res.status(400).send({
 			message:'post downvote value cannot be empty'
 		});
 	}
 
 	/* validate userId is presnt or not. Any downvote has to be associated with an userId i.e. who downvoted the post. If not present return status 400 - with error message:voterId value cannot be empty */
-	if(!req.body.voterId) {
+	if(!parsed.voterId) {
 		return res.status(400).send({
 			message:'voterId value cannot be empty'
 		});
 	}
 
 	const postId = req.params.id;
-	const decrementVoteCount = req.body.downvotes;
-	const voterId = req.body.voterId;
+	const decrementVoteCount = parsed.downvotes;
+	const voterId = parsed.voterId;
 
 	/* If post is not present in the system, return status 404 with error message:post does not exist*/
 	if(DataStructureDb.posts[postId] === false) {
@@ -136,7 +164,6 @@ exports.downvote = function(req,res) {
 	}
 
 	try {
-
 		DataStructureDb.posts[postId].votes -= decrementVoteCount;
 		if(DataStructureDb.posts[postId].voterIds.indexOf(voterId) === -1 ) {
 			DataStructureDb.posts[postId].voterIds.push(voterId);
@@ -153,7 +180,7 @@ exports.downvote = function(req,res) {
 
 
 exports.popularPosts = function(req,res) {
-	//check if limit is present in the URI. Limit is used to determine how many top posts by upvotes has to be returned
+	/* check if limit is present in the URI. Limit is used to determine how many top posts by upvotes has to be returned */
 	let limit = req.params.limit;
 
 	/* If limit is not defined then return top 20 upvoted posts*/
