@@ -36,14 +36,6 @@ require('strict-mode')(function () {
 	    }
 	};
 
-	// try {
-	// 	app.use(express.json());
-	// } catch (err){
-	// 	console.log('syntax error in json');
-	// }
-
-	// app.use(express.text({ type: 'json' }));
-
 	// Tell express to use the body-parser middleware and to not parse extended bodies
 	app.use(express.urlencoded({ extended: true }));
 	app.use(allowCrossDomain);

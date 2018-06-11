@@ -25,9 +25,6 @@ exports.create = function(req, res){
 	/* validate if the body is a valid json or not */
 	try {
 		parsed = JSON.parse(req.body);
-		// console.log(parsed);
-		// console.log(parsed.content);
-		// console.log(parsed.authorId);
 	} catch (err) {
 		res.status(400).send({'message':'The body of your request is not a valid JSON'});
 	}
