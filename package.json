@@ -11,7 +11,8 @@
     "express": "~4.16.0",
     "helmet": "^3.12.1",
     "method-override": "^2.3.10",
-    "strict-mode": "^1.1.2"
+    "strict-mode": "^1.1.2",
+    "swagger-ui-express": "^3.0.9"
   },
   "author": "Ashish Kumar Singh",
   "license": "ISC"

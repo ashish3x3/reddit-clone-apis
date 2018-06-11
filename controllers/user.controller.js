@@ -1,7 +1,7 @@
 
 const DataStructureDb = require('../models/dataStructure.post.models.js');
 
-module.exports = function User(id, name) {
+const User = function User(id, name) {
     this.id = id;
     this.name = name;
 }
@@ -23,7 +23,7 @@ exports.create = function(req, res){
 /* return all users listings*/
 exports.getAll = function(req, res) {
 	/* sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
-	response = {};
+	let response = {};
 	response['data'] = DataStructureDb.users;
 	res.status(200).json(response);
 };
