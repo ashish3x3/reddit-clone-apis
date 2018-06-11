@@ -10,7 +10,7 @@ require('strict-mode')(function () {
 
 	/* Since we will be placing our API in different subdomain such as www.heroku.com , it will require implementations of Cross-Origin Resource Sharing (CORS) for the backend */
 	var allowCrossDomain = function(req, res, next) {
-		res.header('Access-Control-Allow-Origin', '[*]'); // www.heroku.com
+		res.header('Access-Control-Allow-Origin', '*'); // www.heroku.com
 		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST');
 		res.header('Access-Control-Allow-Headers', 'Content-Type');
 		res.header('Content-Type', 'application/json');
