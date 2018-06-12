@@ -86,7 +86,7 @@ You can use the Try it now button available to test the API. Most of the importa
 **DELETE /posts | PATCH /posts**
   - if the user tries to ask for some http method which our server dosen't support, server will notify it with status code 404 and message that it doesn't support DELETE
   
-**OPTION /posts**
+**OPTIONS /posts**
   - server will response with status code 200. This is required as some browser first make a call to server to check if POST/PUT is supported http methods or not.
 
 
