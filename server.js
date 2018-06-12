@@ -44,9 +44,9 @@ require('strict-mode')(function () {
 		res.header('Content-Type', 'application/json');
 
 		/* If API receive DELETE method in the call, return status 404 with message: http method DELETE is not supported */
-	    if ('DELETE' == req.method) {
+	    if ('DELETE' == req.method || 'PATCH' == req.method) {
 	      	res.status(404).send({
-	      			message:'http method DELETE is not supported'
+	      			message:'http method ' + req.method + ' is not supported'
 	      	});
 	    } else if('OPTIONS' == req.method) {
 	    	/* intercept OPTIONS method. This is required because some broweser before making a POST or PUT request make s a call to OPTIONS */
