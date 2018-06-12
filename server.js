@@ -1,3 +1,4 @@
+
 require('strict-mode')(function () {
 	var express = require('express');
 	var helmet = require('helmet');
@@ -41,11 +42,17 @@ require('strict-mode')(function () {
 	app.use(allowCrossDomain);
 	app.use(bodyParser.text({ type: 'application/json' }));
 
+
+
 	/* helmet protects app from some well known web vulnerabilities by setting HTTP headers appropriately. Like disabling 'x-powered-by' header, set xssFilter to avoid Cross-site scripting (XSS), etc */
 	app.use(helmet());
 
 	/* Since its an API, it is bould to change over time with new requirements. Creating a version v1 for version 1 of this API */
 	app.use('/v1', indexRouter);
+
+	app.use(function(req, res, next) {
+		res.status(500).send({'message':'Sorry cant find that. The server encountered an unexpected condition which prevented it from fulfilling the request. Double check the URL'});
+	});
 
 	app.listen(process.env.PORT || 4001, function(err) {
 		if (err) {

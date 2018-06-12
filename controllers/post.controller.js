@@ -1,3 +1,4 @@
+
 const DataStructureDb = require('../models/dataStructure.post.models.js');
 
 /*
@@ -44,7 +45,7 @@ exports.create = function(req, res){
 			});
 		}
 
-		const newPost = new Post(DataStructureDb.posts.length, req.body.content, req.body.authorId);
+		const newPost = new Post(DataStructureDb.posts.length, parsed.content, parsed.authorId);
 		DataStructureDb.posts.push(newPost);
 
 		/* If new post is created usccesfully return the status 201 */
@@ -78,7 +79,6 @@ exports.upvote = function(req,res) {
 	/* validate if the body is a valid json or not */
 	try {
 		parsed = JSON.parse(req.body);
-		console.log('parsed ',parsed);
 	} catch (err) {
 		res.status(400).send({'message':'The body of your request is not a valid JSON'});
 	}
@@ -103,7 +103,7 @@ exports.upvote = function(req,res) {
 	const voterId = parsed.voterId;
 
 	/* If the post is not available in the system, return status code 404 with error message: post does not exist */
-	if(DataStructureDb.posts[postId] === false) {
+	if(!(postId in DataStructureDb.posts)) {
 		return res.status(404).send({
 			message: "post does not exist"
 		});
@@ -117,7 +117,7 @@ exports.upvote = function(req,res) {
 		}
 
 		/* If new post is upvoted succesfully return the status 200 with upvoted post */
-		res.status(201).json({'data':DataStructureDb.posts[postId], 'error':{}});
+		res.status(200).json({'data':DataStructureDb.posts[postId], 'error':{}});
 	} catch (err) {
 		return res.status(500).send({
 			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
@@ -154,7 +154,7 @@ exports.downvote = function(req,res) {
 	const voterId = parsed.voterId;
 
 	/* If post is not present in the system, return status 404 with error message:post does not exist*/
-	if(DataStructureDb.posts[postId] === false) {
+	if(!(postId in DataStructureDb.posts)) {
 		return res.status(404).send({
 		           message: "post does not exist"
 		       });
@@ -167,7 +167,7 @@ exports.downvote = function(req,res) {
 		}
 
 		/* If new post is downvoted succesfully return the status 200 with downvoted post */
-		res.status(201).json({'data':DataStructureDb.posts[postId], 'error':{}});
+		res.status(200).json({'data':DataStructureDb.posts[postId], 'error':{}});
 	} catch (err) {
 		return res.status(500).send({
 			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
@@ -188,7 +188,11 @@ exports.popularPosts = function(req,res) {
 	try {
 		/* sort the posts by upvote count */
 		const topNPosts = DataStructureDb.posts.sort(function (obj1, obj2) {
-		  return obj1.votes < obj2.votes;
+			if (obj1.votes < obj2.votes) {
+				return 1;
+			} else{
+				return -1;
+			}
 		}).slice(0, limit);
 
 		/* return the top N = :limit posts */
