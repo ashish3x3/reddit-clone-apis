@@ -15,6 +15,11 @@ describe('POST /posts (create new post in memory)', function () {
 		"authorId":"userId-1"
 	}
 
+	const post_payload_exceed_length = {
+		"content" : new Array(256).join( 'elements' ),
+		"authorId":"userId-1"
+	}
+
 	const post_payload_content_missing = {
 		"authorId":"userId-1"
 	}
@@ -33,6 +38,7 @@ describe('POST /posts (create new post in memory)', function () {
 	const empty_author_label = 'Post has to be associated with some User. UserId cannot be empty';
 	const invalid_json_label = 'The body of your request is not a valid JSON';
 	const server_error_lable = 'The server encountered an unexpected condition which prevented it from fulfilling the request. Double check the URL. Double check the URL';
+	const content_length_exceed_label = 'Post Content cannot be greater than 256 characters';
 
 	it('responds with json for the newly created content', function(done) {
 		request(localurl)
@@ -81,6 +87,25 @@ describe('POST /posts (create new post in memory)', function () {
 				res.body.should.be.type('object');
 				res.body.should.have.property('message');
 				res.body.should.have.ownProperty('message').equal(empty_post_label);
+				done();
+			})
+	});
+
+	it('responds with 400 (content length cannot exceed 255)', function(done) {
+		request(localurl)
+			.post('/posts')
+			.send(post_payload_exceed_length)
+			.set('Accept', 'application/json')
+			.expect('Content-Type', /json/)
+			.expect(400) //Status code Malfunction
+			.end(function(err,res) {
+				if(err) {
+					throw done(err);
+				}
+				/* check if properties are present or not */
+				res.body.should.be.type('object');
+				res.body.should.have.property('message');
+				res.body.should.have.ownProperty('message').equal(content_length_exceed_label);
 				done();
 			})
 	});
