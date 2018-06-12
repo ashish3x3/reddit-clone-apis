@@ -180,10 +180,22 @@ exports.downvote = function(req,res) {
 		});
 	}
 
+	if(typeof parsed.downvotes !== "number"){
+		return res.status(400).send({
+			message:'post downvote value has to be a number'
+		});
+	}
+
 	/* validate userId is presnt or not. Any downvote has to be associated with an userId i.e. who downvoted the post. If not present return status 400 - with error message:voterId value cannot be empty */
 	if(!parsed.voterId) {
 		return res.status(400).send({
 			message:'voterId value cannot be empty'
+		});
+	}
+
+	if(typeof parsed.voterId !== "string"){
+		return res.status(400).send({
+			message:'voterId has to be a string'
 		});
 	}
 
@@ -205,7 +217,7 @@ exports.downvote = function(req,res) {
 		}
 
 		/* If new post is downvoted succesfully return the status 200 with downvoted post */
-		res.status(200).json({'data':DataStructureDb.posts[postId], 'error':{}});
+		res.status(200).json({'data':JSON.parse(decodeURIComponent(JSON.stringify(DataStructureDb.posts[postId]))), 'error':{}});
 	} catch (err) {
 		return res.status(500).send({
 			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
@@ -217,6 +229,12 @@ exports.downvote = function(req,res) {
 exports.popularPosts = function(req,res) {
 	/* check if limit is present in the URI. Limit is used to determine how many top posts by upvotes has to be returned */
 	let limit = req.params.limit;
+
+	if(limit !== undefined && typeof parseInt(limit) !== "number"){
+		return res.status(400).send({
+			message:'limit value has to be a number'
+		});
+	}
 
 	/* If limit is not defined then return top 20 upvoted posts*/
 	if(!limit && limit < 0) {
@@ -233,8 +251,14 @@ exports.popularPosts = function(req,res) {
 			}
 		}).slice(0, limit);
 
+		let resp = [];
+
+		topNPosts.forEach(function(elem) {
+			resp.push(JSON.parse(decodeURIComponent(JSON.stringify(elem))));
+		});
+
 		/* return the top N = :limit posts */
-		res.status(200).json({'data':topNPosts, 'error':{}});
+		res.status(200).json({'data':resp, 'error':{}});
 	} catch (err) {
 		return res.status(500).send({
 			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'

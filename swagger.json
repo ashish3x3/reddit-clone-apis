@@ -125,7 +125,7 @@
             }
           },
           "400": {
-            "description": "upvotes|voterId value cannot be empty; ; The body of your request is not a valid JSON"
+            "description": "upvotes|voterId value cannot be empty; voterId has to be a string ; post upvote value has to be a number; The body of your request is not a valid JSON"
           },
           "404": {
             "description": "post does not exist"
@@ -177,7 +177,7 @@
             }
           },
           "400": {
-            "description": "parameter downvotes|voterId value cannot be empty; ; The body of your request is not a valid JSON"
+            "description": "parameter downvotes|voterId value cannot be empty; post downvote value has to be a number ; voterId has to be a string; The body of your request is not a valid JSON"
           },
           "404": {
             "description": "post does not exist"
@@ -239,6 +239,9 @@
             "schema": {
               "$ref": "#/definitions/PopularPostResponse"
             }
+          },
+          "400": {
+            "description": "limit value has to be a number"
           },
           "500": {
             "description": "the server encountered an unexpected condition which prevented it from fulfilling the request"
