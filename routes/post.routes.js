@@ -4,7 +4,7 @@ const Post = require('../controllers/post.controller.js');
 
 /* All the routes related to Topic(posts) of the site will be available from this file to our App. */
 
-/* POST create a new post */
+/* POST create a new post. Route that receives a POST request to /posts  */
 router.post('/posts', function(req, res, next) {
 	Post.create(req, res);
 });

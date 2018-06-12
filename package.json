@@ -5,14 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "~4.16.0",
     "helmet": "^3.12.1",
     "method-override": "^2.3.10",
+    "mocha": "^5.2.0",
+    "should": "^13.2.1",
     "strict-mode": "^1.1.2",
+    "supertest": "^3.1.0",
     "swagger-ui-express": "^3.0.9"
   },
   "author": "Ashish Kumar Singh",
