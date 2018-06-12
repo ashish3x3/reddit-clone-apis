@@ -4,12 +4,20 @@ require('strict-mode')(function () {
 	var helmet = require('helmet');
 	var methodOverride = require("method-override");
 	var bodyParser = require('body-parser')
+	var swaggerUi = require('swagger-ui-express');
+	var swaggerDocument = require('./swagger.json');
 
 	// load the routers from routes folder
 	var indexRouter = require('./routes');
 
 	// Create a new instance of express
 	var app = express();
+
+	var options = {
+		explorer : true
+	};
+
+	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 	app.use(methodOverride());
 

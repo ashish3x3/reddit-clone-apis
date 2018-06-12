@@ -1,0 +1,701 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API specifications for the application 'minimal-reddit-clone'",
+    "version": "1.0.0",
+    "title": "Minimal Reddit Clone APIs"
+  },
+  "schemes": [
+    "https"
+  ],
+  "host": "limitless-peak-22038.herokuapp.com",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "Post",
+      "description": "Operations on post like creating,upvoting,downvoting"
+    },
+    {
+      "name": "User",
+      "description": "Operations on User"
+    }
+  ],
+  "paths": {
+    "/posts": {
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "creates a new post in-memory storage",
+        "description": "creates a new post",
+        "operationId": "createPost",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "CreateBody",
+            "in": "body",
+            "description": "Body of the post",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreatePostBody"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CreatePostResponse"
+            }
+          },
+          "400": {
+            "description": "Content|authorId cannot be empty; The body of your request is not a valid JSON"
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "get all posts from in-memory storage",
+        "description": " returns a list of all posts stored in-memory",
+        "operationId": "getPosts",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetPostResponse"
+            }
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/up": {
+      "put": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "upvote an existing post",
+        "description": "upvote a post by a passed upvotes count and associate the userId of the user who upvoted with the voterIds of the post",
+        "operationId": "postUpvote",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "ID of post to be",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "upvote payload body",
+            "in": "body",
+            "description": "Body of the post",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpvoteBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UpvoteResponse"
+            }
+          },
+          "400": {
+            "description": "upvotes|voterId value cannot be empty; ; The body of your request is not a valid JSON"
+          },
+          "404": {
+            "description": "post does not exist"
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      }
+    },
+    "/posts/{postId}/down": {
+      "put": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "downvote an existing post",
+        "description": "downvote a post by a passed downvotes count and associate the userId of the user who downvoted with the voterIds of the post",
+        "operationId": "postDownvote",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "description": "ID of post to be",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "downvote payload body",
+            "in": "body",
+            "description": "Body of the post",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DownvoteBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/DownvoteResponse"
+            }
+          },
+          "400": {
+            "description": "parameter downvotes|voterId value cannot be empty; ; The body of your request is not a valid JSON"
+          },
+          "404": {
+            "description": "post does not exist"
+          },
+          "500": {
+            "description": "The server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      }
+    },
+    "/posts/popularity": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "returns the top 20 post ordered by votes count in desending order",
+        "description": "returns the top 20 post from in-memory storage based on highest number of votes in desending order",
+        "operationId": "getPopularPosts",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "top 20 post by highest number of votes",
+            "schema": {
+              "$ref": "#/definitions/PopularPostResponse"
+            }
+          },
+          "500": {
+            "description": "the server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      }
+    },
+    "/posts/popularity/{limit}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "returns the top N posts ordered by votes count in desending order where N = limit",
+        "description": "returns the top N post from in-memory storage based on highest number of votes in desending order where N = {limit}",
+        "operationId": "getNPopularPosts",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "path",
+            "description": "limit the number of records returned",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "top N post by highest number of votes. N = {limit}",
+            "schema": {
+              "$ref": "#/definitions/PopularPostResponse"
+            }
+          },
+          "500": {
+            "description": "the server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "creates a new post in-memory storage",
+        "description": "creates a new post",
+        "operationId": "createUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "CreateBody",
+            "in": "body",
+            "description": "body of the post",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateUserBody"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CreateUserResponse"
+            }
+          },
+          "400": {
+            "description": "username cannot be empty; ; The body of your request is not a valid JSON"
+          },
+          "500": {
+            "description": "the server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "get all users from in-memory storage",
+        "description": " returns a list of all users stored in memory",
+        "operationId": "getUsers",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "list of all users",
+            "schema": {
+              "$ref": "#/definitions/GetUserResponse"
+            }
+          },
+          "500": {
+            "description": "the server encountered an unexpected condition which prevented it from fulfilling the request"
+          }
+        }
+      }
+    },
+    "/nonexistent-uri": {
+      "get": {
+        "tags": [
+          "Non-Existent URI"
+        ],
+        "summary": "trying to access a non existent REST URI",
+        "description": " return internal server error with a message",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "500": {
+            "description": "Sorry cant find that. The server encountered an unexpected condition which prevented it from fulfilling the request. Double check the URL"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PopularPostResponse": {
+      "description": "body of response of get all posts",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CreatePostResponse"
+          },
+          "example": [
+            {
+              "id": 3,
+              "content": "Creating API for reddit clone",
+              "authorId": "UserId-1",
+              "createTime": "2018-06-10T22:01:21.363Z",
+              "votes": 15,
+              "voterIds": [
+                "UserId-2",
+                "UserId-4",
+                "UserId-7"
+              ]
+            },
+            {
+              "id": 1,
+              "content": "This is Second post",
+              "authorId": "UserId-2",
+              "createTime": "2018-07-10T22:01:21.363Z",
+              "votes": 12,
+              "voterIds": [
+                "UserId-3",
+                "UserId-1",
+                "UserId-7"
+              ]
+            },
+            {
+              "id": 2,
+              "content": "This is Second post",
+              "authorId": "UserId-2",
+              "createTime": "2018-07-10T22:01:21.363Z",
+              "votes": 10,
+              "voterIds": [
+                "UserId-3",
+                "UserId-1",
+                "UserId-7"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "DownvoteBody": {
+      "description": "body of upvote payload to server",
+      "type": "object",
+      "properties": {
+        "downvotes": {
+          "description": "decrement value for the votes to get decremented. This will decrease the total votes of the post identified by postId by +decrement_value",
+          "type": "integer",
+          "format": "int32",
+          "example": 3
+        },
+        "voterId": {
+          "type": "string",
+          "description": "user Id of the author of the post",
+          "example": "userId-1"
+        }
+      },
+      "required": [
+        "downvotes",
+        "voterId"
+      ]
+    },
+    "DownvoteResponse": {
+      "description": "body of the succesfully upvoted post",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1
+            },
+            "content": {
+              "type": "string",
+              "example": "Creating API for reddit clone"
+            },
+            "authorId": {
+              "type": "string",
+              "example": "UserId-2"
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2018-06-10T23:01:28.044Z"
+            },
+            "votes": {
+              "type": "integer",
+              "format": "int32",
+              "example": -3
+            },
+            "voterIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "userId-1"
+              ]
+            }
+          }
+        },
+        "error": {
+          "type": "object"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "description": "contains list of messages for status code 400",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Create400Response"
+      }
+    },
+    "Create400Response": {
+      "description": "array of result possible for status code 400",
+      "type": "object",
+      "properties": {
+        "empty-authod-id": {
+          "type": "string",
+          "example": "authorId cannot be empty"
+        },
+        "empty-content-body": {
+          "type": "string",
+          "example": "content cannot be empty"
+        },
+        "invalid-json": {
+          "type": "string",
+          "example": "The body of your request is not a valid JSON"
+        }
+      }
+    },
+    "UpvoteBody": {
+      "description": "body of upvote payload to server",
+      "type": "object",
+      "properties": {
+        "upvotes": {
+          "description": "increment value for the votes to get incremented. This will increase the total votes of the post identified by postId by +increment_value",
+          "type": "integer",
+          "format": "int32",
+          "example": 4
+        },
+        "voterId": {
+          "type": "string",
+          "description": "user Id of the author of the post",
+          "example": "userId-1"
+        }
+      },
+      "required": [
+        "upvotes",
+        "voterId"
+      ]
+    },
+    "UpvoteResponse": {
+      "description": "body of the succesfully upvoted post",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1
+            },
+            "content": {
+              "type": "string",
+              "example": "Creating API for reddit clone"
+            },
+            "authorId": {
+              "type": "string",
+              "example": "UserId-2"
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2018-06-10T23:01:28.044Z"
+            },
+            "votes": {
+              "type": "integer",
+              "format": "int32",
+              "example": 4
+            },
+            "voterIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "userId-1"
+              ]
+            }
+          }
+        },
+        "error": {
+          "type": "object"
+        }
+      }
+    },
+    "GetPostResponse": {
+      "description": "body of response of get all posts",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CreatePostResponse"
+          },
+          "example": [
+            {
+              "id": 0,
+              "content": "Creating API for reddit clone",
+              "authorId": "UserId-1",
+              "createTime": "2018-06-10T22:01:21.363Z",
+              "votes": 5,
+              "voterIds": [
+                "UserId-2"
+              ]
+            },
+            {
+              "id": 1,
+              "content": "This is Second post",
+              "authorId": "UserId-2",
+              "createTime": "2018-07-10T22:01:21.363Z",
+              "votes": 2,
+              "voterIds": [
+                "UserId-1"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CreatePostResponse": {
+      "description": "body of the succesfully newly created post",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1
+            },
+            "content": {
+              "type": "string",
+              "example": "Creating API for reddit clone"
+            },
+            "authorId": {
+              "type": "string",
+              "example": "UserId-1"
+            },
+            "createTime": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2018-06-10T23:01:28.044Z"
+            },
+            "votes": {
+              "type": "integer",
+              "format": "int32",
+              "example": 0
+            },
+            "voterIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": []
+            }
+          }
+        },
+        "error": {
+          "type": "object"
+        }
+      }
+    },
+    "CreatePostBody": {
+      "description": "body of the create post payload to server",
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "content of the post",
+          "example": "Creating API for reddit clone"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "user Id of the author of the post",
+          "example": "userId-1"
+        }
+      },
+      "required": [
+        "content",
+        "authorId"
+      ]
+    },
+    "CreateUserBody": {
+      "description": "body of the payload to create user",
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "name of the user",
+          "example": "Ashish"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "CreateUserResponse": {
+      "description": "returns the newly created user",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "example": 1
+            },
+            "username": {
+              "type": "string",
+              "example": "Ashish"
+            }
+          }
+        },
+        "error": {
+          "type": "object"
+        }
+      }
+    },
+    "GetUserResponse": {
+      "description": "returns list of all users in memory",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CreateUserResponse"
+          },
+          "example": [
+            {
+              "id": 0,
+              "username": "Ashish"
+            },
+            {
+              "id": 1,
+              "username": "ICC"
+            }
+          ]
+        },
+        "error": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}
