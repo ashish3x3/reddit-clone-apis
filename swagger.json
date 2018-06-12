@@ -54,7 +54,7 @@
             }
           },
           "400": {
-            "description": "Content|authorId cannot be empty; The body of your request is not a valid JSON"
+            "description": "Content|authorId cannot be empty ; Post Content cannot be greater than 256 characters ;The body of your request is not a valid JSON"
           },
           "500": {
             "description": "The server encountered an unexpected condition which prevented it from fulfilling the request"

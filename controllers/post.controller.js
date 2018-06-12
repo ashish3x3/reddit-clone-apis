@@ -38,6 +38,13 @@ exports.create = function(req, res){
 			});
 		}
 
+		// validate if length of content is greater than 256
+		if(parsed.content.length > 255) {
+			return res.status(400).send({
+				message:'Post Content cannot be greater than 256 characters'
+			});
+		}
+
 		// validate if Id of the author who created this post is present or not
 		if(!parsed.authorId) {
 			return res.status(400).send({
