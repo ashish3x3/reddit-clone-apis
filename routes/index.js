@@ -10,7 +10,7 @@ router.use(require('./users.routes.js'))
 /* GET home page. Home page will redirect user to the top 20 popular posts by upvotes page */
 router.get('/', function(req, res, next) {
 	/* redirect user to top 20 popular posts by upvotes page */
-	res.redirect('/posts/popularity');
+	res.redirect('/v1/posts/popularity');
 });
 
 module.exports = router;
