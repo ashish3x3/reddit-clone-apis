@@ -32,7 +32,11 @@ You can use the Try it now button available to test the API. Most of the importa
 
 ![Post Response](/public/images/post-response.PNG?raw=true "Post Response")
 
-
+## How to test the APIs ##
+- Try passing data in current format to the URIs and see the result as expected or not
+- Try passing data in wrong format and see if you get proper validation error or not
+- Try passing wrong type of data and see if server validates it or not
+- Try going to wrong URI address and see if you get server error with message that the URI does not exist 
 
 
 **API's endpoints:**
@@ -66,12 +70,19 @@ You can use the Try it now button available to test the API. Most of the importa
 # Design: #
 
 - All the data that is sent from the server to the frontend is enveloped properly to remove potential security risks which comes with sending non-envelop data
+
 -Although session and other user authentication related functionality is not asked, I have tried addressing them by simply creating mock function in order to better provide the idea of how the data will flow in the system.
+
 - status codes have been chosen with care when returning to the user
+
 - API has been written with extensibility in mind reason being no API remains same for a long time. For the same reason I have given this API specification as version V1(/v1/posts)
+
 - In memory data storage structure is inspired by MongoDB document-oriented design. so its extensible for future requirements without becoming the bottleneck
-- I have given special attention to desgning the entire infrastructure because even though the requiremts were minimum, I have tried delivering a production ready and extensible backend system with security optimization and reducing the amount of web vulnerabilitties through my design by setting appropriate headers to protect against cross site scripting,addressing unwanted header modifications, code security scan,addressing dependent package vulnerabilties,rate limiting to protect against spams, upvotes call going through a auth check for the validity of the user,using envelopes for data transmission,naming explicit media tyeps,etc to name a few
+
+- I have given special attention to desgning the entire infrastructure because even though the requiremts were minimum, I have tried delivering a production ready and extensible backend system with security optimization and reducing the amount of web vulnerabilitties through my design by setting appropriate headers to **protect against cross site scripting,addressing unwanted header modifications, code security scan,addressing dependent package vulnerabilties,rate limiting to protect against spams, upvotes call going through a auth check for validating the validity of the user,using envelopes for data transmission,naming explicit media tyeps,storing encoded data in the data storage and returning decoded data through API,etc to name a few**
+
 Note: uglify package has a critical vulnerability but there are no patches out yet for it
+
 - All the API functionality including routes are tested by writing unit and integration tests for them. I have done black box testing using superset and code flow BDD testing using mocha. I'll be adding more test as and when required. Currently, all the functionality is covered with their branching(cyclomatic complexities) if any
 
 ![Test Cases Passes](/public/images/test-run.PNG?raw=true "Test Cases")
