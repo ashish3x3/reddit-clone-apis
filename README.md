@@ -33,10 +33,10 @@ You can use the Try it now button available to test the API. Most of the importa
 ![Post Response](/public/images/post-response.PNG?raw=true "Post Response")
 
 ## How to test the APIs ##
-- Try passing data in current format to the URIs and see the result as expected or not
-- Try passing data in wrong format and see if you get proper validation error or not
-- Try passing wrong type of data and see if server validates it or not
-- Try going to wrong URI address and see if you get server error with message that the URI does not exist 
+- Try passing data in current format as defined by API specs to the URIs and see the result as expected or not
+- Try passing data in wrong format and see if you get proper validation error or not. e.g. by not passing *content* in the body of POST /posts call, by sending invalid JSON structure to any URI,etc
+- Try passing wrong type of data and see if server validates it or not. e.g. passing string value as upvote counter instead of number, passing number field as userid instead of string,etc
+- Try going to wrong URI address and see if you get server error with message that the URI does not exist. e.g. *POST /nonexistent-url* and see what server responds
 - Try passing unsupported http method like **DELETE,PATCH to /posts/:id** and check if server responds with correct error message or not
 
 
@@ -151,6 +151,6 @@ PATCH is not an idempotent call i.e storing a particular value against a key in 
 Currently, APIs only support single insert at a time in terms of DB and that is a bad design since we can't do any optimization. Initially created a bulkified API for creating and updating but there are too many decision that is to be made and I wasn't sure should I do that for this or not. But I would love to discuss them whenever we could about my thought processes.
 
 ### Future scope : ###
--providing the option to pass filter to select which field to return in the response to an API call. It will significantly reduce the bandwidth usage for unnecessary data transmission which client sometimes doesn't require
+- providing the option to pass filter to select which field to return in the response to an API call. It will significantly reduce the bandwidth usage for unnecessary data transmission which client sometimes doesn't require
 - passing filter for on which key to sort the posts, currently, we support upvotes
 - sending next page token in every result to support feasible pagination
