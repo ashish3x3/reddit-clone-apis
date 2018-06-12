@@ -33,6 +33,7 @@ You can use the Try it now button available to test the API. Most of the importa
 ![Post Response](/public/images/post-response.PNG?raw=true "Post Response")
 
 ## How to test the APIs ##
+- Any REST client like Postman,etc could be used to populate the data and visualize it on the browser. e.g. make a POST /posts call with some data and then head to the https://limitless-peak-22038.herokuapp.com/v1/posts to see if it returns the recently created data. similarly other calls could be made to and visualize it
 - Try passing data in current format as defined by API specs to the URIs and see the result as expected or not
 - Try passing data in wrong format and see if you get proper validation error or not. e.g. by not passing *content* in the body of POST /posts call, by sending invalid JSON structure to any URI,etc
 - Try passing wrong type of data and see if server validates it or not. e.g. passing string value as upvote counter instead of number, passing number field as userid instead of string,etc
