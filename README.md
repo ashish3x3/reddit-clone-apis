@@ -37,7 +37,7 @@ You can use the Try it now button available to test the API. Most of the importa
 - Try passing data in wrong format and see if you get proper validation error or not
 - Try passing wrong type of data and see if server validates it or not
 - Try going to wrong URI address and see if you get server error with message that the URI does not exist 
-- Try passing unsupported http method like DELETE /posts/:id and check if server responds with correct error message or not
+- Try passing unsupported http method like **DELETE,PATCH to /posts/:id** and check if server responds with correct error message or not
 
 
 **API's endpoints:**
@@ -46,6 +46,10 @@ You can use the Try it now button available to test the API. Most of the importa
 
   * create a new post | return status 201 -created | status 400 if required parameters are missing |500 for any server related error
 
+  ```javascript
+    post_payload_body = { content : "String of length 256 TEXT REQUIRED", authorID: "user id of the author STRING REQUIRED"
+  ```
+
 **GET /v1/posts**
 
   * return list of all posts in the memory
@@ -53,21 +57,32 @@ You can use the Try it now button available to test the API. Most of the importa
 **PUT  /v1/posts/:id/up**
 
   -   upvote a post identified by :id | return status 200 on successful update| status 400 if required params are missing | status 404 if post id doesn't exist in the system| status 500 for internal server error
+  ```javascript
+    post_upvote_payload_body = { upvotes : "increment counter NUMBER REQUIRED", voterId: "user id of the voter STRING REQUIRED"
+  ```
 
 **POST /v1/posts/:id/down**
 
   - downvotes a post identified by :id | return status 200 on successful update| status 400 if required params are missing | status 404 if post id doesn't exist in the system| status 500 for internal server error
   
+  ```javascript
+    post_doenvote_payload_body = { downvotes : "decrement counter NUMBER REQUIRED", voterId: "user id of the voter STRING REQUIRED"
+  ```
+  
 **GET  /v1/posts/popularity**
   - return top 20 posts ordered by total number of upvotes | status 200 on successful completion of request | status 500 for internal server errors
   
-**GET  v1/posts/popularity/:limit**
+**GET  v1/posts/popularity/:limit?**
   - returns only a subset of top posts(limited by {limit}) ordered by highest number of upvotes | status 200 on successful completion of request |status 500 on server errors | If a negative number is passed as the limit, it returns default top 20 posts 
+  
+  ```javascript
+    limit : NUMBER OPTIONAL
+  ```
   
 **GET /non-existent-url**
   - if the user tries to ask for some random URI which system doesn't support, a message will appear explaining the same | status 500 is returned along with the message
   
-**DELETE /posts**
+**DELETE /posts | PATCH /posts**
   - if the user tries to ask for some http method which our server dosen't support, server will notify it with status code 404 and message that it doesn't support DELETE
   
 **OPTION /posts**
