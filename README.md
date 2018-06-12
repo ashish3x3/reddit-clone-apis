@@ -10,7 +10,7 @@ You can use the Try it now button available to test the API. Most of the importa
 
 
 ### Swagger API Try me Now UI ###
-![Try-Me-Now](/public/images/try-me-now.PNG?raw=true "Try-Me-Now")
+![Try-Me-Now](/public/images/try-it-now.PNG?raw=true "Try-Me-Now")
 
 
 ### Swagger API Specification UI ###
