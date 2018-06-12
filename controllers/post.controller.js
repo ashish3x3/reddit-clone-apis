@@ -38,6 +38,12 @@ exports.create = function(req, res){
 			});
 		}
 
+		if(typeof parsed.content !== "string"){
+			return res.status(400).send({
+				message:'Post Content has to be a string'
+			});
+		}
+
 		// validate if length of content is greater than 256
 		if(parsed.content.length > 255) {
 			return res.status(400).send({
@@ -52,11 +58,18 @@ exports.create = function(req, res){
 			});
 		}
 
-		const newPost = new Post(DataStructureDb.posts.length, parsed.content, parsed.authorId);
+		if(typeof parsed.authorId !== "string"){
+			return res.status(400).send({
+				message:'UserId has to be a string'
+			});
+		}
+
+		const newPost = new Post(DataStructureDb.posts.length, encodeURIComponent(parsed.content), encodeURIComponent(parsed.authorId));
+		console.log(newPost);
 		DataStructureDb.posts.push(newPost);
 
 		/* If new post is created usccesfully return the status 201 */
-		res.status(201).json({'data':newPost, 'error':{}});
+		res.status(201).json({'data':JSON.parse(decodeURIComponent(JSON.stringify(newPost))), 'error':{}});
 	} catch (err) {
 		return res.status(500).send({
 			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
@@ -70,8 +83,14 @@ exports.getAll = function(req, res) {
 	try {
 		/* sending the data in an envelope to overcome various vulnerabilities of sending data as non-enveloped which has potential security risk*/
 		let response = {};
-		response['data'] = DataStructureDb.posts;
+		let resp = [];
 		response['error'] = {};
+
+		DataStructureDb.posts.forEach(function(elem) {
+			resp.push(JSON.parse(decodeURIComponent(JSON.stringify(elem))));
+		});
+
+		response['data'] = resp;
 		res.status(200).json(response);
 	} catch (err) {
 		return res.status(500).send({
@@ -97,10 +116,22 @@ exports.upvote = function(req,res) {
 		});
 	}
 
+	if(typeof parsed.upvotes !== "number"){
+		return res.status(400).send({
+			message:'post upvote value has to be a number'
+		});
+	}
+
 	/* validate userId of the user who upvoted the post is presnt or not. Any upvote has to be associated with an userId i.e. user who upvoted the post */
 	if(!parsed.voterId) {
 		return res.status(400).send({
 			message:'voterId value cannot be empty'
+		});
+	}
+
+	if(typeof parsed.voterId !== "string"){
+		return res.status(400).send({
+			message:'voterId has to be a string'
 		});
 	}
 
@@ -124,7 +155,7 @@ exports.upvote = function(req,res) {
 		}
 
 		/* If new post is upvoted succesfully return the status 200 with upvoted post */
-		res.status(200).json({'data':DataStructureDb.posts[postId], 'error':{}});
+		res.status(200).json({'data':JSON.parse(decodeURIComponent(JSON.stringify(DataStructureDb.posts[postId]))), 'error':{}});
 	} catch (err) {
 		return res.status(500).send({
 			message:'the server encountered an unexpected condition which prevented it from fulfilling the request'
