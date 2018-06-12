@@ -6,6 +6,8 @@ API's specifications/contracts are being hosted on Heroku and can be accessed
 
 https://limitless-peak-22038.herokuapp.com/api-docs/#/
 
+Site is also hosted at https://limitless-peak-22038.herokuapp.com/v1/
+
 You can use the Try it now button available to test the API. Most of the important API contracts are provided in the specifications but few are missing because of the limitation of the swagger in some ways.
 
 
