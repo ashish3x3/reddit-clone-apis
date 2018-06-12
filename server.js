@@ -6,6 +6,7 @@ require('strict-mode')(function () {
 	var bodyParser = require('body-parser')
 	var swaggerUi = require('swagger-ui-express');
 	var swaggerDocument = require('./swagger.json');
+	var RateLimit = require('express-rate-limit');
 
 	// load the routers from routes folder
 	var indexRouter = require('./routes');
@@ -20,6 +21,18 @@ require('strict-mode')(function () {
 	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 	app.use(methodOverride());
+
+	/* only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc) */
+	app.enable('trust proxy');
+
+	var limiter = new RateLimit({
+		windowMs: 15*60*1000, // 15 minutes
+		max: 100, // limit each IP to 100 requests per windowMs
+		delayMs: 0, // disable delaying - full speed until the max limit is reached
+		message: "Too many requests, please try again later.", // returned when max connection is exceeded
+		statusCode: 429, //max connection exceeded
+		skipFailedRequests:true //failed requests (response status >= 400) won't be counted
+	});
 
 
 	/* Since we will be placing our API in different subdomain such as www.heroku.com , it will require implementations of Cross-Origin Resource Sharing (CORS) for the backend */
@@ -50,10 +63,11 @@ require('strict-mode')(function () {
 	app.use(allowCrossDomain);
 	app.use(bodyParser.text({ type: 'application/json' }));
 
-
-
 	/* helmet protects app from some well known web vulnerabilities by setting HTTP headers appropriately. Like disabling 'x-powered-by' header, set xssFilter to avoid Cross-site scripting (XSS), etc */
 	app.use(helmet());
+
+	/* apply to all requests since we are only serving te API endpoints and no static contents as of now */
+	app.use(limiter);
 
 	/* Since its an API, it is bould to change over time with new requirements. Creating a version v1 for version 1 of this API */
 	app.use('/v1', indexRouter);
