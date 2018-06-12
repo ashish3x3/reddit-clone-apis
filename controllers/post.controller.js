@@ -1,13 +1,5 @@
 
-
-process.env.NODE_ENV = 'test';
-
-console.log('starting');
-
 const DataStructureDb = require('../models/dataStructure.post.models.js');
-// const winston = require('winston');
-const debug = require('debug')('my-namespace')
-const name = 'my-app'
 
 /*
 	description: data structure to hold a Post in the system
@@ -87,7 +79,6 @@ exports.upvote = function(req,res) {
 	/* validate if the body is a valid json or not */
 	try {
 		parsed = JSON.parse(req.body);
-		console.log('parsed ',parsed);
 	} catch (err) {
 		res.status(400).send({'message':'The body of your request is not a valid JSON'});
 	}
@@ -187,32 +178,22 @@ exports.downvote = function(req,res) {
 
 exports.popularPosts = function(req,res) {
 	/* check if limit is present in the URI. Limit is used to determine how many top posts by upvotes has to be returned */
-	console.log('dsasdasa ',DataStructureDb.posts);
 	let limit = req.params.limit;
-	console.log(limit, req.params);
-	// winston.log('info', 'limit!', {
-	//   req.params: req.params
-	// })
 
 	/* If limit is not defined then return top 20 upvoted posts*/
 	if(!limit && limit < 0) {
 		limit  = 20;
 	}
 
-	console.log('dsasdasa ',DataStructureDb.posts);
-
 	try {
 		/* sort the posts by upvote count */
 		const topNPosts = DataStructureDb.posts.sort(function (obj1, obj2) {
-			console.log('obj1 < obj2 ',obj1.votes > obj2.votes);
 			if (obj1.votes < obj2.votes) {
 				return 1;
 			} else{
 				return -1;
 			}
 		}).slice(0, limit);
-
-		console.log('topNPosts ',topNPosts);
 
 		/* return the top N = :limit posts */
 		res.status(200).json({'data':topNPosts, 'error':{}});

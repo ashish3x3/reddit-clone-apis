@@ -1,4 +1,3 @@
-process.env.NODE_ENV = 'test';
 
 var should = require('should');
 var assert = require('assert');

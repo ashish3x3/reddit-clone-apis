@@ -1,6 +1,4 @@
 
-process.env.NODE_ENV = 'test';
-
 require('strict-mode')(function () {
 	var express = require('express');
 	var helmet = require('helmet');
