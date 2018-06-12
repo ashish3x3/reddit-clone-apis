@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test';
+
 var should = require('should');
 var assert = require('assert');
 var request = require('supertest');
@@ -131,7 +133,7 @@ describe('GET /posts (get all the posts)', function () {
 });
 
 
-describe('PUT /posts/:id/down (Downvote a Post)', function () {
+describe('PUT /posts/:id/up (Upvote a Post)', function () {
 	this.timeout(0);
 
 	const post_upvote_payload = {
@@ -486,7 +488,7 @@ describe('PUT /posts/:id/down (Downvote a Post)', function () {
 		});
 });
 
-describe('Get top N popular Post', function () {
+describe('Access a nonexistent resource URI ', function () {
 	const server_error_lable = 'Sorry cant find that. The server encountered an unexpected condition which prevented it from fulfilling the request. Double check the URL';
 
 	it('unknown path causes a 500 internal server error', function(done) {
@@ -510,24 +512,104 @@ describe('Get top N popular Post', function () {
 });
 
 
-describe('GET /posts/popu.arity (Get top N popular Post)', function () {
-	it('causes a 404', function(done) {
+describe('GET /posts/popularity (Get top N popular Post)', function () {
+	const post_upvote_payload = {
+		"upvotes" : 4,
+		"voterId":"userId-1"
+	}
+
+	it('return top 20 posts by upvotes in descending order ', function(done) {
+		request(localurl)
+			.get('/posts/popularity')
+			.set('Accept', 'application/json')
+			.expect('Content-Type', /json/)
+			.expect(200) //Status code OK
+			.end(function(err,res) {
+				if(err) {
+					throw done(err);
+				}
+				/* check if properties are present or not */
+				res.body.should.be.type('object');
+				res.body.should.have.property('data');
+				res.body.should.have.property('error');
+				// res.body.should.have.ownProperty('data').should.be.an.instanceOf(Array);
+				res.body.data.should.be.an.instanceOf(Array);
+				// res.body.should.have.ownProperty('data').should.be.empty;
+				res.body.data[0].votes.should.be.above(res.body.data[1].votes);
+				res.body.data.length.should.not.be.above(20);
+				done();
+			})
+	});
+
+});
+
+describe('GET /posts/popularity/limit (Get top {limit} popular Post)', function () {
+	const post_upvote_payload = {
+		"upvotes" : 4,
+		"voterId":"userId-1"
+	}
+
+	it('return top 2 posts by upvotes in descending order ', function(done) {
+		request(localurl)
+			.get('/posts/popularity/2')
+			.set('Accept', 'application/json')
+			.expect('Content-Type', /json/)
+			.expect(200) //Status code OK
+			.end(function(err,res) {
+				if(err) {
+					throw done(err);
+				}
+				/* check if properties are present or not */
+				res.body.should.be.type('object');
+				res.body.should.have.property('data');
+				res.body.should.have.property('error');
+				res.body.data.should.be.an.instanceOf(Array);
+				res.body.data[0].votes.should.be.above(res.body.data[1].votes);
+				res.body.data.length.should.not.be.above(2);
+				done();
+			})
+
+	});
+
+	it('return top 20 posts if limit is less than 0 ', function(done) {
+		request(localurl)
+			.get('/posts/popularity/-2')
+			.set('Accept', 'application/json')
+			.expect('Content-Type', /json/)
+			.expect(200) //Status code OK
+			.end(function(err,res) {
+				if(err) {
+					throw done(err);
+				}
+				/* check if properties are present or not */
+				res.body.should.be.type('object');
+				res.body.should.have.property('data');
+				res.body.should.have.property('error');
+				res.body.data.should.be.an.instanceOf(Array);
+				res.body.data[0].votes.should.be.above(res.body.data[1].votes);
+				res.body.data.length.should.not.be.above(20);
+				done();
+			})
 
 	});
 
 });
 
-// describe('Access a nonexistent resource URI', function () {
-// 	it('causes a 404', function(done) {
-// 		// request(localurl)
-// 		// 	.post('/nonexistent')
-// 		// 	.expect(404) //Status code
-// 	});
-// });
 
-
-
-
+describe('OPTIONS / (Check what all method is supported by server)', function () {
+	it('return GET, POST and PUT with Status code 200', function(done) {
+		request(localurl)
+			.options('/posts/')
+			.expect('Access-Control-Allow-Methods', 'GET, PUT, POST')
+			.expect(200)
+			.end(function(err,res) {
+				if(err) {
+					throw done(err);
+				}
+				done();
+			});
+	});
+});
 
 
 

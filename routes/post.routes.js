@@ -1,3 +1,8 @@
+
+
+process.env.NODE_ENV = 'test';
+
+
 var express = require('express');
 var router = express.Router();
 const Post = require('../controllers/post.controller.js');
@@ -32,11 +37,13 @@ router.put('/posts/:id/down', validateAuthentication, function (req, res) {
 
 /* GET return the top 20 popular posts by upvotes. Here 20 is hardcoded value if no limit is provided on how many post to return */
 router.get('/posts/popularity', validateAuthentication, function (req, res) {
+	console.log('req.params. .. ',req.params);
 	Post.popularPosts(req, res);
 });
 
 /* GET return the top N posts where N = :limit passed as filter param to the API */
 router.get('/posts/popularity/:limit?', validateAuthentication, function (req, res) {
+	console.log('req.params. .. ',req.params);
 	Post.popularPosts(req, res);
 });
 
