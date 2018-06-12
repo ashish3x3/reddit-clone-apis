@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha --inspect --recursive"
+    "test": "mocha --recursive"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
